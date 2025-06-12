@@ -19,7 +19,24 @@ class ConfigurationService:
     def __init__(self, container, logger: Optional[TTSLogger] = None):
         self.container = container
         self.logger = logger or TTSLogger("config_service")
-    
+
+    def get_config(self) -> Dict[str, Any]:
+        """Get the current configuration as a dictionary for the UI."""
+        return self.container.get_config().to_dict()
+
+    def save_config(self, config_dict: Dict[str, Any]) -> bool:
+        """
+        Save the configuration from a UI dictionary, returns success status.
+        """
+        try:
+            config_obj = TTSConfig.from_dict(config_dict)
+            self.container.update_config(config_obj)
+            self.logger.info("Configuration saved successfully via service.")
+            return True
+        except Exception as e:
+            self.logger.error("Failed to save configuration from dictionary", exception=e)
+            return False
+
     def validate_config(self, config: TTSConfig) -> ValidationResult:
         """Validate complete configuration"""
         result = ValidationResult.success_result()

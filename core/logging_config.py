@@ -316,7 +316,9 @@ def get_logger(name: str = "gemini_tts") -> TTSLogger:
 def setup_logging(level: str = "INFO", name: str = "gemini_tts") -> TTSLogger:
     """Set up logging system"""
     logger = TTSLogger(name, level)
-    logger.info("Logging system initialized", level=level, name=name)
+    # Corrected call: Removed the conflicting keyword arguments.
+    # The logger's name and level are already included in the log format.
+    logger.info("Logging system initialized")
     return logger
 
 # Context manager for operation logging

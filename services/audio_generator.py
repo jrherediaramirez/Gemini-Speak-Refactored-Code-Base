@@ -14,7 +14,7 @@ import urllib.parse
 from typing import Optional, Dict, Any, Tuple
 
 from ..core.models import TTSConfig, AudioGenerationRequest, AudioGenerationResult, Result
-from ..core.constants import APIConstants, ModelConstants, AudioConstants
+from ..core.constants import APIConstants, ModelConstants, AudioConstants, VoiceConstants
 from ..core.exceptions import *
 from ..core.logging_config import TTSLogger, LoggedOperation
 
@@ -374,6 +374,10 @@ Instructions:
                 error_message = getattr(e, 'user_message', str(e))
                 error_code = getattr(e, 'error_code', None)
                 return Result.error_result(error_message, error_code)
+            
+    def get_available_voices(self) -> list:
+        """Get a list of available TTS voice names."""
+        return VoiceConstants.get_all_voices()
     
     def get_available_models(self) -> Dict[str, Dict[str, Any]]:
         """Get available model definitions"""

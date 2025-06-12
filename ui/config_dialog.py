@@ -506,7 +506,7 @@ def show_config_dialog():
         from ..core.container import get_global_container
         
         container = get_global_container()
-        config_service = container.get_configuration_service()
+        config_service = container.get_config_service()
         audio_generator = container.get_audio_generator()
         cache_manager = container.get_cache_manager()
         content_analyzer = container.get_content_analyzer()

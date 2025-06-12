@@ -210,15 +210,33 @@ class TTSContainer:
         """Get editor integration instance"""
         if self._editor_integration is None:
             try:
-                # This will be implemented when we create the UI layer
                 from ..ui.editor_integration import EditorIntegration
+
+                # Get the required services from the container
+                config_service = self.get_config_service()
+                audio_generator = self.get_audio_generator()
+                text_processor = self.get_text_processor()
+
+                # Check if services are available before proceeding
+                if not all([config_service, audio_generator, text_processor]):
+                    self.logger.error("One or more services are unavailable for EditorIntegration.")
+                    return None
+
+                # Instantiate EditorIntegration with the correct dependencies
                 self._editor_integration = EditorIntegration(
-                    container=self,
-                    logger=self.logger
+                    get_config=config_service.get_config,
+                    save_config=config_service.save_config,
+                    get_models=audio_generator.get_available_models,
+                    get_voices=audio_generator.get_available_voices,
+                    generate_audio=audio_generator.generate_audio,
+                    normalize_text=text_processor.preprocess_text, # Corrected method name
+                    should_use_unified=text_processor.validate_text_length # Placeholder, adjust if different
                 )
-            except ImportError:
-                # Fallback - return None for now during migration
-                self.logger.warning("EditorIntegration not yet implemented")
+            except ImportError as e:
+                self.logger.warning("EditorIntegration could not be imported.", exception=e)
+                return None
+            except Exception as e:
+                self.logger.error("Failed to create EditorIntegration instance.", exception=e)
                 return None
         return self._editor_integration
     
